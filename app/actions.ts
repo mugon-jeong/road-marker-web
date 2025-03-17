@@ -1,7 +1,7 @@
 "use server";
 
 import { config } from "dotenv";
-import webpush from "web-push";
+import webpush, { PushSubscription } from "web-push";
 
 config({ path: ".env" });
 
@@ -38,7 +38,7 @@ export async function sendNotification(message: string) {
       JSON.stringify({
         title: "Test Notification",
         body: message,
-        icon: "/icon.png",
+        icon: "/icon-192x192.png",
       })
     );
     return { success: true };

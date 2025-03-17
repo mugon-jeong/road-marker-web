@@ -5,6 +5,7 @@ export default function manifest(): MetadataRoute.Manifest {
     name: "RoadMarker",
     short_name: "RoadMarker",
     description: "지도 위에 마커를 찍는 여행 다이어리",
+    scope: "/",
     start_url: "/",
     display: "standalone",
     background_color: "#ffffff",
