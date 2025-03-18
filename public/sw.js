@@ -3,8 +3,8 @@ self.addEventListener("push", function (event) {
     const data = event.data.json();
     const options = {
       body: data.body,
-      icon: data.icon || "/icon-192x192.png",
-      badge: "/icon-192x192.png",
+      icon: data.icon || "/favicon-96x96.png",
+      badge: "/favicon-96x96.png",
       vibrate: [100, 50, 100],
       data: {
         dateOfArrival: Date.now(),
@@ -18,5 +18,5 @@ self.addEventListener("push", function (event) {
 self.addEventListener("notificationclick", function (event) {
   console.log("Notification click received.");
   event.notification.close();
-  event.waitUntil(clients.openWindow("https://192.168.45.87:3000"));
+  event.waitUntil(clients.openWindow("https://road-marker-web.vercel.app"));
 });
