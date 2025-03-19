@@ -1,13 +1,8 @@
-"use client";
+import { auth } from "@/auth";
+import { redirect } from "next/navigation";
 
-import { PushNotificationManager } from "./_components/push-notification-manager";
-import { InstallPrompt } from "./_components/install-prompt";
-
-export default function Page() {
-  return (
-    <div>
-      <PushNotificationManager />
-      <InstallPrompt />
-    </div>
-  );
+export default async function Page() {
+  const session = await auth();
+  if (session) redirect("/dashboard");
+  return redirect("/signin");
 }

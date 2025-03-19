@@ -1,9 +1,6 @@
 "use server";
 
-import { config } from "dotenv";
 import webpush, { PushSubscription } from "web-push";
-
-config({ path: ".env" });
 
 webpush.setVapidDetails(
   "mailto:jmg41490400@gmail.com",
