@@ -1,12 +1,9 @@
-import { auth } from "@/auth";
-import SignIn from "@/components/form/sign-in";
-import { redirect } from "next/navigation";
-import React from "react";
+import { signInWithGoogle } from "@/app/signin/actions";
 
-const page = async () => {
-  const session = await auth();
-  if (session) redirect("/dashboard");
-  return <SignIn />;
-};
-
-export default page;
+export default function LoginPage() {
+  return (
+    <form action={signInWithGoogle}>
+      <button type="submit">Signin with Google</button>
+    </form>
+  );
+}
