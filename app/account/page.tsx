@@ -8,6 +8,8 @@ const page = async () => {
   const {
     data: { user },
   } = await supabase.auth.getUser();
+
+  console.log(user);
   return (
     <div>
       <AccountForm user={user} />

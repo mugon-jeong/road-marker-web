@@ -9,14 +9,16 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@next/third-parties": "^15.2.3",
     "@radix-ui/react-slot": "^1.1.2",
     "@supabase/ssr": "^0.6.1",
     "@supabase/supabase-js": "^2.49.1",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "google": "link:@next/third-parties/google",
     "ky": "^1.7.5",
     "lucide-react": "^0.482.0",
-    "next": "15.2.2",
+    "next": "15.2.3",
     "next-intl": "^4.0.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
