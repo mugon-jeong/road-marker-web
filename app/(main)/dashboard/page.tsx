@@ -4,11 +4,10 @@ import { GoogleMapsEmbed } from "@next/third-parties/google";
 const page = async () => {
   //   const t = useTranslations("HomePage");
   return (
-    <div>
+    <div className="h-full">
       <GoogleMapsEmbed
         apiKey={process.env.GOOGLE_MAPS!}
-        height={200}
-        width="100%"
+        style="height: 50vh; width: 100%;"
         mode="place"
         q="Brooklyn+Bridge,New+York,NY"
       />
