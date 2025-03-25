@@ -10,7 +10,7 @@ import {
   SidebarRail,
   SidebarSeparator,
 } from "@/components/ui/sidebar";
-import { TeamSwitcher } from "./team-switcher";
+import { TravelSwitcher } from "./travel-switcher";
 import { DatePicker } from "./date-picker";
 import { Calendars } from "./calendars";
 import { NavUser } from "./nav-user";
@@ -59,7 +59,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar {...props}>
       <SidebarHeader className="h-16 border-b border-sidebar-border">
-        <TeamSwitcher teams={data.teams} />
+        <TravelSwitcher teams={data.teams} />
       </SidebarHeader>
       <SidebarContent>
         <DatePicker />
