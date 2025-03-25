@@ -1,20 +1,19 @@
-import * as React from "react";
-import { Plus } from "lucide-react";
+"use client";
 
-import { Calendars } from "@/components/sidebar/calendars";
-import { DatePicker } from "@/components/sidebar/date-picker";
-import { NavUser } from "@/components/sidebar/nav-user";
+import { AudioWaveform, Command, GalleryVerticalEnd } from "lucide-react";
+import * as React from "react";
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
   SidebarHeader,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
   SidebarRail,
   SidebarSeparator,
 } from "@/components/ui/sidebar";
+import { TeamSwitcher } from "./team-switcher";
+import { DatePicker } from "./date-picker";
+import { Calendars } from "./calendars";
+import { NavUser } from "./nav-user";
 
 // This is sample data.
 const data = {
@@ -23,6 +22,23 @@ const data = {
     email: "m@example.com",
     avatar: "/avatars/shadcn.jpg",
   },
+  teams: [
+    {
+      name: "Acme Inc",
+      logo: GalleryVerticalEnd,
+      plan: "Enterprise",
+    },
+    {
+      name: "Acme Corp.",
+      logo: AudioWaveform,
+      plan: "Startup",
+    },
+    {
+      name: "Evil Corp.",
+      logo: Command,
+      plan: "Free",
+    },
+  ],
   calendars: [
     {
       name: "My Calendars",
@@ -43,7 +59,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar {...props}>
       <SidebarHeader className="h-16 border-b border-sidebar-border">
-        <NavUser user={data.user} />
+        <TeamSwitcher teams={data.teams} />
       </SidebarHeader>
       <SidebarContent>
         <DatePicker />
@@ -51,14 +67,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <Calendars calendars={data.calendars} />
       </SidebarContent>
       <SidebarFooter>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton>
-              <Plus />
-              <span>New Calendar</span>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        </SidebarMenu>
+        <NavUser user={data.user} />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>
