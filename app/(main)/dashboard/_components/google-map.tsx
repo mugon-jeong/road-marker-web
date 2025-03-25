@@ -5,8 +5,7 @@ import { AdvancedMarker, APIProvider, Map } from "@vis.gl/react-google-maps";
 import React from "react";
 
 const GoogleMap = () => {
-  const { curLocation, errorMsg, isLoading, getCurrentLocation } =
-    useGeoLocation();
+  const { curLocation, getCurrentLocation } = useGeoLocation();
   return (
     <APIProvider apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS!}>
       <Map
