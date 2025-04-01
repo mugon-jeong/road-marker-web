@@ -40,25 +40,6 @@ export const useGeoLocation = () => {
     setIsLoading(false);
   }, []);
 
-  const getCurrentLocation = useCallback(() => {
-    const { geolocation } = navigator;
-    if (!geolocation) return;
-
-    setIsLoading(true);
-    geolocation.getCurrentPosition(
-      (position) => {
-        const { latitude, longitude } = position.coords;
-        setLocation({
-          latitude,
-          longitude,
-        });
-        setIsLoading(false);
-      },
-      (err) => showError(err),
-      { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
-    );
-  }, [showError]);
-
   useEffect(() => {
     const { geolocation } = navigator;
     if (!geolocation) return;
@@ -82,6 +63,5 @@ export const useGeoLocation = () => {
     curLocation: location,
     isLoading,
     errorMsg,
-    getCurrentLocation,
   };
 };

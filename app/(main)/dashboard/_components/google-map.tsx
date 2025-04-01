@@ -1,36 +1,42 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import { useGeoLocation } from "@/hooks/use-geo-location";
-import { AdvancedMarker, APIProvider, Map } from "@vis.gl/react-google-maps";
-import React from "react";
+import {
+  APIProvider,
+  ControlPosition,
+  Map,
+  MapControl,
+} from "@vis.gl/react-google-maps";
+import { useState } from "react";
 
 const GoogleMap = () => {
-  const { curLocation, getCurrentLocation } = useGeoLocation();
+  const [current, setCurrent] = useState<{ lat: number; lng: number }>();
+  const { curLocation } = useGeoLocation();
+
+  const handleCurrentLocation = () => {
+    setCurrent({
+      lat: curLocation.latitude,
+      lng: curLocation.longitude,
+    });
+  };
+
   return (
     <APIProvider apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS!}>
       <Map
         defaultCenter={{
-          lat: curLocation.latitude,
-          lng: curLocation.longitude,
+          lat: 37.579293849225756,
+          lng: 126.97798076343491,
         }}
-        defaultZoom={15}
-        mapId="DEMO_MAP_ID"
-        disableDefaultUI={false}
+        center={current}
+        zoom={12}
         gestureHandling={"greedy"}
+        disableDefaultUI={true}
+        mapId={"road-marker"}
       >
-        <AdvancedMarker
-          position={{
-            lat: curLocation.latitude,
-            lng: curLocation.longitude,
-          }}
-        />
+        <MapControl position={ControlPosition.BOTTOM_RIGHT}>
+          <Button onClick={handleCurrentLocation}>현재 위치로</Button>
+        </MapControl>
       </Map>
-      <Button
-        onClick={getCurrentLocation}
-        className="absolute bottom-4 right-4 z-10"
-      >
-        현재 위치로
-      </Button>
     </APIProvider>
   );
 };
