@@ -1,9 +1,10 @@
 import React from "react";
+import CreateTravelForm from "./_components/create-travel-form";
 
 export default function page() {
   return (
     <div>
-      <div>Create</div>
+      <CreateTravelForm />
     </div>
   );
 }

@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { getLocale } from "next-intl/server";
 import { NextIntlClientProvider } from "next-intl";
+import { Toaster } from "@/components/ui/sonner";
 
 const APP_NAME = "RoadMarker";
 const APP_DEFAULT_TITLE = "RoadMarker";
@@ -75,6 +76,7 @@ export default async function RootLayout({
         <NextIntlClientProvider>
           {children}
           {modal}
+          <Toaster />
         </NextIntlClientProvider>
       </body>
     </html>

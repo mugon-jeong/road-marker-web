@@ -1,7 +1,9 @@
+"use server";
+
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 
-export default async function Page() {
+export const createTravel = async ({ title }: { title: string }) => {
   const supabase = await createClient();
   const {
     data: { user },
@@ -9,12 +11,10 @@ export default async function Page() {
   if (!user) {
     redirect("/signin");
   }
-  const { data } = await supabase
+  console.log("user", user);
+  return await supabase
     .from("travels")
+    .insert({ title, user_id: user.id })
     .select("*")
-    .eq("user_id", user.id);
-  if (data && data.length > 0) {
-    redirect(`/travels/${data[0].id}`);
-  }
-  return redirect("/travels/new");
-}
+    .single();
+};
