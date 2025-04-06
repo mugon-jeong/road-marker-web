@@ -4,6 +4,7 @@ import "./globals.css";
 import { getLocale } from "next-intl/server";
 import { NextIntlClientProvider } from "next-intl";
 import { Toaster } from "@/components/ui/sonner";
+import { QueryProvider } from "@/providers/query-provider";
 
 const APP_NAME = "RoadMarker";
 const APP_DEFAULT_TITLE = "RoadMarker";
@@ -74,9 +75,11 @@ export default async function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <NextIntlClientProvider>
-          {children}
-          {modal}
-          <Toaster />
+          <QueryProvider>
+            {children}
+            {modal}
+            <Toaster />
+          </QueryProvider>
         </NextIntlClientProvider>
       </body>
     </html>

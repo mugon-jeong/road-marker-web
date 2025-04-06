@@ -14,6 +14,8 @@ import { TravelSwitcher } from "./travel-switcher";
 import { DatePicker } from "./date-picker";
 import { Calendars } from "./calendars";
 import { NavUser } from "./nav-user";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { getTravels } from "../../_actions/travel-actions";
 
 // This is sample data.
 const data = {
@@ -55,11 +57,22 @@ const data = {
   ],
 };
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+export function AppSidebar({
+  current,
+  ...props
+}: React.ComponentProps<typeof Sidebar> & { current: string }) {
+  const {
+    data: { data: travels },
+  } = useSuspenseQuery({
+    queryKey: ["get-travels"],
+    queryFn: getTravels,
+  });
   return (
     <Sidebar {...props}>
       <SidebarHeader className="h-16 border-b border-sidebar-border">
-        <TravelSwitcher teams={data.teams} />
+        <React.Suspense fallback={<div>Loading...</div>}>
+          <TravelSwitcher travels={travels} current={current} />
+        </React.Suspense>
       </SidebarHeader>
       <SidebarContent>
         <DatePicker />

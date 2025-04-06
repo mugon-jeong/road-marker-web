@@ -1,7 +1,7 @@
 "use client";
 
-import * as React from "react";
 import { ChevronsUpDown, Plus } from "lucide-react";
+import * as React from "react";
 
 import {
   DropdownMenu,
@@ -18,25 +18,43 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { useRouter } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 
 export function TravelSwitcher({
-  teams,
+  travels,
+  current,
 }: {
-  teams: {
-    name: string;
-    logo: React.ElementType;
-    plan: string;
-  }[];
+  travels:
+    | {
+        created_at: string;
+        deleted_at: string | null;
+        id: string;
+        title: string;
+        updated_at: string | null;
+        user_id: string;
+      }[]
+    | null;
+  current: string;
 }) {
   const { isMobile } = useSidebar();
   const router = useRouter();
-  const [activeTeam, setActiveTeam] = React.useState(teams[0]);
-
-  if (!activeTeam) {
-    return null;
+  if (travels === null || travels.length === 0) {
+    redirect("/travels/new");
   }
+  const currentTravel = travels.find((travel) => travel.id === current);
+  if (!currentTravel) {
+    redirect("/travels/new");
+  }
+  const [activeTeam, setActiveTeam] = React.useState(currentTravel);
 
+  const handleTravelChange = ({ id }: { id: string }) => {
+    const selected = travels.find((travel) => travel.id === id);
+    if (!selected) {
+      redirect("/travels/new");
+    }
+    setActiveTeam(selected);
+    router.push(`/travels/${selected.id}`);
+  };
   return (
     <SidebarMenu>
       <SidebarMenuItem>
@@ -47,13 +65,13 @@ export function TravelSwitcher({
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
               <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                <activeTeam.logo className="size-4" />
+                {activeTeam.title.slice(0, 2).toUpperCase()}
               </div>
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-semibold">
-                  {activeTeam.name}
+                  {activeTeam.title}
                 </span>
-                <span className="truncate text-xs">{activeTeam.plan}</span>
+                <span className="truncate text-xs">{activeTeam.title}</span>
               </div>
               <ChevronsUpDown className="ml-auto" />
             </SidebarMenuButton>
@@ -67,16 +85,16 @@ export function TravelSwitcher({
             <DropdownMenuLabel className="text-xs text-muted-foreground">
               Travels
             </DropdownMenuLabel>
-            {teams.map((team, index) => (
+            {travels.map((travel, index) => (
               <DropdownMenuItem
-                key={team.name}
-                onClick={() => setActiveTeam(team)}
+                key={travel.id}
+                onClick={() => handleTravelChange({ id: travel.id })}
                 className="gap-2 p-2"
               >
                 <div className="flex size-6 items-center justify-center rounded-sm border">
-                  <team.logo className="size-4 shrink-0" />
+                  {travel.title.slice(0, 1).toUpperCase()}
                 </div>
-                {team.name}
+                {travel.title}
                 <DropdownMenuShortcut>⌘{index + 1}</DropdownMenuShortcut>
               </DropdownMenuItem>
             ))}
