@@ -33,7 +33,7 @@ const GoogleMap = () => {
         disableDefaultUI={true}
         mapId={"road-marker"}
       >
-        <MapControl position={ControlPosition.BOTTOM_RIGHT}>
+        <MapControl position={ControlPosition.RIGHT_BOTTOM}>
           <Button onClick={handleCurrentLocation}>현재 위치로</Button>
         </MapControl>
       </Map>
