@@ -13,16 +13,17 @@ import {
 } from "@/components/ui/sidebar";
 import { AppSidebar } from "./_components/sidebar/app-sidebar";
 
-const layout = ({
+const layout = async ({
   children,
   params,
 }: Readonly<{
   children: React.ReactNode;
   params: { id: string };
 }>) => {
+  const { id } = await params;
   return (
     <SidebarProvider>
-      <AppSidebar current={params.id} />
+      <AppSidebar current={id} />
       <SidebarInset>
         <header className="sticky top-0 flex h-16 shrink-0 items-center gap-2 border-b bg-background px-4">
           <SidebarTrigger className="-ml-1" />

@@ -18,6 +18,7 @@ import { Input } from "@/components/ui/input";
 import { createTravel } from "../_actions/travel-action";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { useQueryClient } from "@tanstack/react-query";
 
 const formSchema = z.object({
   title: z.string().min(2, {
@@ -26,6 +27,7 @@ const formSchema = z.object({
 });
 export default function CreateTravelForm() {
   const router = useRouter();
+  const queryClient = useQueryClient();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -42,6 +44,7 @@ export default function CreateTravelForm() {
     }
     if (data) {
       toast.success(`Travel created successfully with title: ${values.title}`);
+      queryClient.invalidateQueries({ queryKey: ["get-travels"] });
       form.reset();
       router.back();
     } else {
