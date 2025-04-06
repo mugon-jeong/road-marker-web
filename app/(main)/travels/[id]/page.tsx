@@ -4,7 +4,7 @@ import GoogleMap from "./_components/google-map";
 const page = () => {
   return (
     <div className="h-full relative p-4">
-      <Link href={"/travels"} passHref>
+      <Link href={"/travels/new"} passHref>
         Create
       </Link>
       <GoogleMap />

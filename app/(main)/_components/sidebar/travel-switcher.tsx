@@ -83,7 +83,7 @@ export function TravelSwitcher({
             <DropdownMenuSeparator />
             <DropdownMenuItem
               className="gap-2 p-2"
-              onClick={() => router.push("/travels")}
+              onClick={() => router.push("/travels/new")}
             >
               <div className="flex size-6 items-center justify-center rounded-md border bg-background">
                 <Plus className="size-4" />
