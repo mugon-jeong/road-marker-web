@@ -42,7 +42,7 @@ export default function CreateTravelForm() {
     }
     if (data) {
       toast.success(`Travel created successfully with title: ${values.title}`);
-      form.reset();
+      router.replace(`/travels/${data.id}`);
     } else {
       toast.error("Error creating travel");
     }
