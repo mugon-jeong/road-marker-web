@@ -12,18 +12,22 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { AppSidebar } from "./_components/sidebar/app-sidebar";
+import {getTravels} from "@/app/(main)/travels/[id]/_actions/travel-actions";
+import {getItineraries} from "@/app/(main)/travels/[id]/_actions/itinerary-actions";
 
 const layout = async ({
   children,
   params,
 }: Readonly<{
   children: React.ReactNode;
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }>) => {
   const { id } = await params;
+  const travels = getTravels().then((res) => res.data);
+  const itineraries= getItineraries(id)
   return (
     <SidebarProvider>
-      <AppSidebar current={id} />
+      <AppSidebar current={id} travels={travels} itineraries={itineraries} />
       <SidebarInset>
         <header className="sticky top-0 flex h-16 shrink-0 items-center gap-2 border-b bg-background px-4">
           <SidebarTrigger className="-ml-1" />
