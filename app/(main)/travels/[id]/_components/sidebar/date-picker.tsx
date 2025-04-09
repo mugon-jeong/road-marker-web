@@ -1,15 +1,21 @@
-"use client"
-import {Calendar} from "@/components/ui/calendar";
-import {SidebarGroup, SidebarGroupContent} from "@/components/ui/sidebar";
-import {use, useState} from "react";
-import {format, isSameDay} from "date-fns";
-import {DayMouseEventHandler} from "react-day-picker";
-import {CalendarPlus} from "lucide-react";
-import {Separator} from "@/components/ui/separator";
-import {addItinerary, Itineraries} from "@/app/(main)/travels/[id]/_actions/itinerary-actions";
+"use client";
+import { Calendar } from "@/components/ui/calendar";
+import { SidebarGroup, SidebarGroupContent } from "@/components/ui/sidebar";
+import { use, useState } from "react";
+import { format, isSameDay } from "date-fns";
+import { DayMouseEventHandler } from "react-day-picker";
+import { Separator } from "@/components/ui/separator";
+import { Itineraries } from "@/app/(main)/travels/[id]/_actions/itinerary-actions";
+import { AddItineraryDialog } from "./add-itinerary-dialog";
 
-export function DatePicker({itineraries}: { itineraries: Promise<Itineraries> }) {
-  const values = use(itineraries)
+export function DatePicker({
+  current,
+  itineraries,
+}: {
+  current: string;
+  itineraries: Promise<Itineraries>;
+}) {
+  const values = use(itineraries);
   const dates = values?.map((itinerary) => new Date(itinerary.date)) || [];
   const [value, setValue] = useState<Date[]>(dates);
   const handleDayClick: DayMouseEventHandler = (day, modifiers) => {
@@ -22,39 +28,30 @@ export function DatePicker({itineraries}: { itineraries: Promise<Itineraries> })
     }
     setValue(newValue);
   };
-  const handleAddItinerary = async () => {
-    const result = await addItinerary("31ffc18b-a872-4b26-9187-a158ece3c172", (new Date()))
-    console.log(result)
-  }
   return (
     <SidebarGroup className="px-0">
       <SidebarGroupContent>
         <Calendar
           captionLayout={"buttons"}
           onDayClick={handleDayClick}
-          modifiers={{selected: value}}
+          modifiers={{ selected: value }}
           className="[&_[role=gridcell].bg-accent]:bg-sidebar-primary [&_[role=gridcell].bg-accent]:text-sidebar-primary-foreground [&_[role=gridcell]]:w-[33px]"
-          disabled={{before: new Date()}}
+          disabled={{ before: new Date() }}
           components={{
-            CaptionLabel: ({id, displayMonth}) => {
+            CaptionLabel: ({ id, displayMonth }) => {
               return (
                 <div key={id} className="flex items-center justify-between">
                   <span className="text-sm font-medium">
                     {format(displayMonth, "MMMM yyyy")}
                   </span>
-                  <Separator orientation="vertical"/>
-                  <button className="p-1.5 rounded-full hover:bg-muted/50 transition-colors"
-                          onClick={handleAddItinerary}>
-                    <CalendarPlus className="h-4 w-4 text-muted-foreground cursor-pointer"/>
-                  </button>
+                  <Separator orientation="vertical" />
+                  <AddItineraryDialog travelId={current} />
                 </div>
               );
-            }
+            },
           }}
         />
-
       </SidebarGroupContent>
     </SidebarGroup>
   );
 }
-

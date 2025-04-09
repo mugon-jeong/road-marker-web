@@ -59,12 +59,12 @@ export default function CreateTravelForm() {
           name="title"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Username</FormLabel>
+              <FormLabel>여행 제목</FormLabel>
               <FormControl>
-                <Input placeholder="shadcn" {...field} />
+                <Input placeholder="한국 여행" {...field} />
               </FormControl>
               <FormDescription>
-                This is your public display name.
+                여행을 대표하는 제목을 입력해주세요.
               </FormDescription>
               <FormMessage />
             </FormItem>
