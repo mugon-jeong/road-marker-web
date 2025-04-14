@@ -1,6 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import { useGeoLocation } from "@/hooks/use-geo-location";
+import { useLocation } from "@/providers/location-provider";
 import {
   APIProvider,
   ControlPosition,
@@ -11,12 +11,12 @@ import { useState } from "react";
 
 const GoogleMap = () => {
   const [current, setCurrent] = useState<{ lat: number; lng: number }>();
-  const { curLocation } = useGeoLocation();
+  const { latitude, longitude, setMapCenter } = useLocation();
 
   const handleCurrentLocation = () => {
     setCurrent({
-      lat: curLocation.latitude,
-      lng: curLocation.longitude,
+      lat: latitude,
+      lng: longitude,
     });
   };
 
@@ -24,14 +24,19 @@ const GoogleMap = () => {
     <APIProvider apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS!}>
       <Map
         defaultCenter={{
-          lat: 37.579293849225756,
-          lng: 126.97798076343491,
+          lat: latitude,
+          lng: longitude,
         }}
         center={current}
         zoom={12}
         gestureHandling={"greedy"}
         disableDefaultUI={true}
         mapId={"road-marker"}
+        onCenterChanged={(center) => {
+          if (center.type === "center_changed") {
+            setMapCenter(center.detail.center.lat, center.detail.center.lng);
+          }
+        }}
       >
         <MapControl position={ControlPosition.RIGHT_BOTTOM}>
           <Button onClick={handleCurrentLocation}>현재 위치로</Button>

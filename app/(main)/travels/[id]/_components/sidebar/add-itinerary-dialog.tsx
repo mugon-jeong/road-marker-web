@@ -10,7 +10,6 @@ import {
 } from "@/components/ui/dialog";
 import { format } from "date-fns";
 import { Label } from "@/components/ui/label";
-import { addItinerary } from "../../_actions/itinerary-actions";
 import { useState } from "react";
 import {
   Popover,
@@ -20,29 +19,24 @@ import {
 import { cn } from "@/lib/utils";
 import { CalendarIcon, CalendarPlus } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
-import { toast } from "sonner";
 
-export function AddItineraryDialog({ travelId }: { travelId: string }) {
-  const [open, setOpen] = useState(false);
-
+export function AddItineraryDialog({
+  open,
+  onAddItineraryDialog,
+  onOpenChange,
+}: {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  onAddItineraryDialog: (date: Date) => void;
+}) {
   const [date, setDate] = useState<Date>();
 
-  const handleAddItinerary = async () => {
+  const handleSubmit = () => {
     if (!date) return;
-    const result = await addItinerary(travelId, date);
-    if (result && result.length > 0) {
-      toast("일정 추가 완료", {
-        description: `${format(date, "PPP")} 일정이 추가되었습니다.`,
-      });
-      setOpen(false);
-    } else {
-      toast.error("일정 추가 실패", {
-        description: "일정을 추가하는 중 오류가 발생했습니다.",
-      });
-    }
+    onAddItineraryDialog(date);
   };
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogTrigger asChild>
         <button className="p-1.5 rounded-full hover:bg-muted/50 transition-colors">
           <CalendarPlus className="h-4 w-4 text-muted-foreground cursor-pointer" />
@@ -83,7 +77,7 @@ export function AddItineraryDialog({ travelId }: { travelId: string }) {
           </div>
         </div>
         <DialogFooter>
-          <Button type="submit" onClick={handleAddItinerary}>
+          <Button type="submit" onClick={handleSubmit}>
             여행 일정 추가하기
           </Button>
         </DialogFooter>

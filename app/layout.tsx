@@ -5,6 +5,8 @@ import { getLocale } from "next-intl/server";
 import { NextIntlClientProvider } from "next-intl";
 import { Toaster } from "@/components/ui/sonner";
 import { QueryProvider } from "@/providers/query-provider";
+import { LocationProvider } from "@/providers/location-provider";
+import { InstallPrompt } from "./_components/install-prompt";
 
 const APP_NAME = "RoadMarker";
 const APP_DEFAULT_TITLE = "RoadMarker";
@@ -18,12 +20,10 @@ export const metadata: Metadata = {
     template: APP_TITLE_TEMPLATE,
   },
   description: APP_DESCRIPTION,
-  manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
     title: APP_DEFAULT_TITLE,
-    // startUpImage: [],
   },
   formatDetection: {
     telephone: false,
@@ -76,9 +76,12 @@ export default async function RootLayout({
       >
         <NextIntlClientProvider>
           <QueryProvider>
-            {children}
-            {modal}
-            <Toaster />
+            <LocationProvider>
+              {children}
+              {modal}
+              <Toaster />
+              <InstallPrompt />
+            </LocationProvider>
           </QueryProvider>
         </NextIntlClientProvider>
       </body>
