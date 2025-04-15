@@ -5,7 +5,6 @@ import { getLocale } from "next-intl/server";
 import { NextIntlClientProvider } from "next-intl";
 import { Toaster } from "@/components/ui/sonner";
 import { QueryProvider } from "@/providers/query-provider";
-import { LocationProvider } from "@/providers/location-provider";
 import { InstallPrompt } from "./_components/install-prompt";
 
 const APP_NAME = "RoadMarker";
@@ -76,12 +75,10 @@ export default async function RootLayout({
       >
         <NextIntlClientProvider>
           <QueryProvider>
-            <LocationProvider>
-              {children}
-              {modal}
-              <Toaster />
-              <InstallPrompt />
-            </LocationProvider>
+            {children}
+            {modal}
+            <Toaster />
+            <InstallPrompt />
           </QueryProvider>
         </NextIntlClientProvider>
       </body>

@@ -21,7 +21,6 @@ export function DatePicker({
   itineraries: Promise<Itineraries>;
 }) {
   const values = use(itineraries);
-
   const dates =
     values?.map((itinerary) => ({
       ...itinerary,
@@ -58,7 +57,6 @@ export function DatePicker({
       toast.success("일정 추가 완료", {
         description: `${format(date, "PPP")} 일정이 추가되었습니다.`,
       });
-      console.log(result);
       return { ...result[0], date: new Date(result[0].date) };
     }
     toast.error("일정 추가 실패", {
