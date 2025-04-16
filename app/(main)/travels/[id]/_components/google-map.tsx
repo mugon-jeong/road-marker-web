@@ -11,6 +11,7 @@ import { Minus, Plus, X } from "lucide-react";
 import { useState } from "react";
 import { MapSearchAutocomplete } from "./map-search-autocomplete";
 import AutocompleteResult from "./autocomplete-result";
+import { AdvancedMarker, Pin } from "@vis.gl/react-google-maps";
 import {
   Drawer,
   DrawerContent,
@@ -34,6 +35,11 @@ const GoogleMap = () => {
   const [selectedPlace, setSelectedPlace] =
     useState<google.maps.places.Place | null>(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
+  const [mapInstance, setMapInstance] = useState<google.maps.Map | null>(null);
+  const [nearbyPlaces, setNearbyPlaces] = useState<google.maps.places.Place[]>(
+    []
+  );
 
   const handleZoomIn = () => {
     setZoom((prev) => Math.min(prev + 1, MAX_ZOOM));
@@ -62,6 +68,10 @@ const GoogleMap = () => {
         gestureHandling={"greedy"}
         disableDefaultUI={true}
         mapId={"road-marker"}
+        onIdle={(map) => {
+          if (!mapInstance && map instanceof google.maps.Map)
+            setMapInstance(map);
+        }}
         onCenterChanged={(center) => {
           if (center.type === "center_changed") {
             setMapCenter(center.detail.center.lat, center.detail.center.lng);
@@ -75,6 +85,10 @@ const GoogleMap = () => {
                 setSelectedPlace(place);
                 setIsDrawerOpen(true);
               }}
+              center={current || { lat: latitude, lng: longitude }}
+              selectedTypes={selectedTypes}
+              onTypesChange={setSelectedTypes}
+              onNearbyPlaces={setNearbyPlaces}
             />
           </div>
         </MapControl>
@@ -90,6 +104,25 @@ const GoogleMap = () => {
           </div>
         </MapControl>
         <AutocompleteResult place={selectedPlace} />
+        {nearbyPlaces.map((place, index) => (
+          <AdvancedMarker
+            key={`${place.id}-${index}`}
+            position={place.location}
+            onClick={() => {
+              setSelectedPlace(place);
+              setIsDrawerOpen(true);
+              if (place.viewport && mapInstance)
+                mapInstance.fitBounds(place.viewport);
+            }}
+          >
+            <Pin
+              background={place.iconBackgroundColor}
+              glyph={
+                place.svgIconMaskURI ? new URL(place.svgIconMaskURI) : null
+              }
+            />
+          </AdvancedMarker>
+        ))}
       </Map>
       <Drawer
         open={isDrawerOpen && selectedPlace !== null}
