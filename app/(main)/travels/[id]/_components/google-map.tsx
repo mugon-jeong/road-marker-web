@@ -7,10 +7,10 @@ import {
   Map,
   MapControl,
 } from "@vis.gl/react-google-maps";
-import { Minus, Plus, X } from "lucide-react";
+import { ChevronLeft, ChevronRight, Minus, Plus, X } from "lucide-react";
 import { useState } from "react";
 import { MapSearchAutocomplete } from "./map-search-autocomplete";
-import AutocompleteResult from "./autocomplete-result";
+
 import { AdvancedMarker, Pin } from "@vis.gl/react-google-maps";
 import {
   Drawer,
@@ -19,11 +19,8 @@ import {
   DrawerTitle,
   DrawerClose,
 } from "@/components/ui/drawer";
-import {
-  PlaceDirectionsButton,
-  IconButton,
-  PlaceOverview,
-} from "@googlemaps/extended-component-library/react";
+
+import PlaceDetails from "./place-details";
 const MIN_ZOOM = 3;
 const MAX_ZOOM = 20;
 const DEFAULT_ZOOM = 12;
@@ -32,14 +29,10 @@ const GoogleMap = () => {
   const [current, setCurrent] = useState<{ lat: number; lng: number }>();
   const { latitude, longitude, setMapCenter } = useLocation();
   const [zoom, setZoom] = useState(DEFAULT_ZOOM);
-  const [selectedPlace, setSelectedPlace] =
-    useState<google.maps.places.Place | null>(null);
+  const [places, setPlaces] = useState<google.maps.places.Place[]>([]);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
   const [mapInstance, setMapInstance] = useState<google.maps.Map | null>(null);
-  const [nearbyPlaces, setNearbyPlaces] = useState<google.maps.places.Place[]>(
-    []
-  );
 
   const handleZoomIn = () => {
     setZoom((prev) => Math.min(prev + 1, MAX_ZOOM));
@@ -82,14 +75,27 @@ const GoogleMap = () => {
           <div className="p-2">
             <MapSearchAutocomplete
               onPlaceSelect={(place) => {
-                setSelectedPlace(place);
-                setIsDrawerOpen(true);
+                if (place) {
+                  setPlaces([place]);
+                  setIsDrawerOpen(true);
+                }
               }}
               center={current || { lat: latitude, lng: longitude }}
               selectedTypes={selectedTypes}
               onTypesChange={setSelectedTypes}
-              onNearbyPlaces={setNearbyPlaces}
+              onNearbyPlaces={(nearbyPlaces) => setPlaces(nearbyPlaces)}
             />
+          </div>
+        </MapControl>
+        <MapControl position={ControlPosition.RIGHT_CENTER}>
+          <div className="p-2">
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={() => setIsDrawerOpen(!isDrawerOpen)}
+            >
+              {isDrawerOpen ? <ChevronRight /> : <ChevronLeft />}
+            </Button>
           </div>
         </MapControl>
         <MapControl position={ControlPosition.RIGHT_BOTTOM}>
@@ -103,13 +109,12 @@ const GoogleMap = () => {
             <Button onClick={handleCurrentLocation}>현재 위치로</Button>
           </div>
         </MapControl>
-        <AutocompleteResult place={selectedPlace} />
-        {nearbyPlaces.map((place, index) => (
+        {places.map((place, index) => (
           <AdvancedMarker
             key={`${place.id}-${index}`}
             position={place.location}
             onClick={() => {
-              setSelectedPlace(place);
+              setPlaces([...places]);
               setIsDrawerOpen(true);
               if (place.viewport && mapInstance)
                 mapInstance.fitBounds(place.viewport);
@@ -125,14 +130,14 @@ const GoogleMap = () => {
         ))}
       </Map>
       <Drawer
-        open={isDrawerOpen && selectedPlace !== null}
+        open={isDrawerOpen}
         onOpenChange={setIsDrawerOpen}
         direction="right"
       >
         <DrawerContent>
           <DrawerHeader className="border-b">
             <div className="flex justify-between items-center">
-              <DrawerTitle>{selectedPlace?.displayName}</DrawerTitle>
+              <DrawerTitle>장소 목록</DrawerTitle>
               <DrawerClose asChild>
                 <Button variant="ghost" size="icon">
                   <X className="h-4 w-4" />
@@ -140,74 +145,7 @@ const GoogleMap = () => {
               </DrawerClose>
             </div>
           </DrawerHeader>
-          <div className="p-4 space-y-4">
-            {selectedPlace && (
-              <PlaceOverview
-                size="large"
-                place={selectedPlace}
-                googleLogoAlreadyDisplayed
-              >
-                <div slot="action" className="SlotDiv">
-                  <IconButton slot="action" variant="filled">
-                    See Reviews
-                  </IconButton>
-                </div>
-                <div slot="action" className="SlotDiv">
-                  <PlaceDirectionsButton slot="action" variant="filled">
-                    Directions
-                  </PlaceDirectionsButton>
-                </div>
-              </PlaceOverview>
-            )}
-            {selectedPlace?.formattedAddress && (
-              <div>
-                <h3 className="font-semibold mb-1">주소</h3>
-                <p className="text-sm text-muted-foreground">
-                  {selectedPlace.formattedAddress}
-                </p>
-              </div>
-            )}
-            {selectedPlace?.rating && (
-              <div>
-                <h3 className="font-semibold mb-1">평점</h3>
-                <p className="text-sm text-muted-foreground">
-                  {selectedPlace.rating} / 5.0 ({selectedPlace.userRatingCount}
-                  개의 평가)
-                </p>
-              </div>
-            )}
-            {selectedPlace?.internationalPhoneNumber && (
-              <div>
-                <h3 className="font-semibold mb-1">전화번호</h3>
-                <p className="text-sm text-muted-foreground">
-                  {selectedPlace.internationalPhoneNumber}
-                </p>
-              </div>
-            )}
-            {selectedPlace?.websiteURI && (
-              <div>
-                <h3 className="font-semibold mb-1">웹사이트</h3>
-                <a
-                  href={selectedPlace.websiteURI}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-sm text-blue-600 hover:underline"
-                >
-                  {selectedPlace.websiteURI}
-                </a>
-              </div>
-            )}
-            {selectedPlace?.regularOpeningHours && (
-              <div>
-                <h3 className="font-semibold mb-1">영업시간</h3>
-                <p className="text-sm text-muted-foreground">
-                  {selectedPlace.regularOpeningHours.weekdayDescriptions?.join(
-                    "\n"
-                  )}
-                </p>
-              </div>
-            )}
-          </div>
+          <PlaceDetails places={places} />
         </DrawerContent>
       </Drawer>
     </APIProvider>
