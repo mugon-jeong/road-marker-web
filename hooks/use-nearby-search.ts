@@ -5,6 +5,7 @@ export type UseNearbySearchReturn = {
   places: google.maps.places.Place[];
   isLoading: boolean;
   search: () => Promise<void>;
+  reset: () => void;
 };
 
 export type UseNearbySearchOptions = {
@@ -58,7 +59,6 @@ export function useNearbySearch(
   const placesLib = useMapsLibrary("places");
   const [places, setPlaces] = useState<google.maps.places.Place[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-
   const searchNearby = useCallback(async () => {
     if (!placesLib) return;
 
@@ -75,6 +75,8 @@ export function useNearbySearch(
           "viewport",
           "svgIconMaskURI",
           "iconBackgroundColor",
+          "formattedAddress",
+          "rating",
           "id",
         ],
         locationRestriction: {
@@ -87,11 +89,10 @@ export function useNearbySearch(
         includedPrimaryTypes: options.includedPrimaryTypes,
         maxResultCount: options.maxResultCount || 5,
         rankPreference:
-          options.rankPreference || SearchNearbyRankPreference.POPULARITY,
-        language: options.language || "en-US",
-        region: options.region || "us",
+          options.rankPreference || SearchNearbyRankPreference.DISTANCE,
+        language: options.language || "ko-KR",
+        region: options.region || "ko",
       };
-      console.log("request", request); // log the request object to the console for debugging purposes
 
       const { places: searchResults } = await Place.searchNearby(request);
       setPlaces(searchResults);
@@ -163,5 +164,6 @@ export function useNearbySearch(
     places,
     isLoading,
     search: searchNearby,
+    reset: () => setPlaces([]),
   };
 }

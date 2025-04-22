@@ -12,20 +12,25 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { Fragment } from "react";
 
 interface PlaceDetailsProps {
   places: google.maps.places.Place[];
+  selectedPlace: google.maps.places.Place | null;
 }
 
-const PlaceDetails = ({ places }: PlaceDetailsProps) => {
+const PlaceDetails = ({ places, selectedPlace }: PlaceDetailsProps) => {
   if (!places || places.length === 0) return null;
+  const sortedPlaces = places.slice().sort((a, b) => {
+    if (selectedPlace?.id === a.id) return -1;
+    if (selectedPlace?.id === b.id) return 1;
+    return 0;
+  });
 
   return (
     <ScrollArea className="h-[calc(100vh-80px)]">
       <div className="p-4 space-y-4">
-        {places.map((place, index) => (
-          <Fragment key={index}>
+        {sortedPlaces.map((place, index) => (
+          <div key={index} id={`place-${place.id}`}>
             <PlaceOverview
               size="large"
               place={place}
@@ -113,7 +118,7 @@ const PlaceDetails = ({ places }: PlaceDetailsProps) => {
                 </AccordionContent>
               </AccordionItem>
             </Accordion>
-          </Fragment>
+          </div>
         ))}
       </div>
     </ScrollArea>

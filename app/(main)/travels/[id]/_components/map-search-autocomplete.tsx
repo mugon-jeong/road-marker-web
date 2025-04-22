@@ -50,7 +50,8 @@ export const MapSearchAutocomplete = ({
     }),
     [center, selectedTypes]
   );
-  const { places: nearbyPlaces } = useNearbySearch(searchOptions);
+  const { places: nearbyPlaces, reset: resetNearBy } =
+    useNearbySearch(searchOptions);
 
   useEffect(() => {
     onNearbyPlaces(nearbyPlaces);
@@ -69,6 +70,8 @@ export const MapSearchAutocomplete = ({
           "location",
           "svgIconMaskURI",
           "iconBackgroundColor",
+          "id",
+          "displayName",
         ],
       });
 
@@ -89,6 +92,7 @@ export const MapSearchAutocomplete = ({
       : [...selectedTypes, type];
     onTypesChange(newTypes);
     if (newTypes.length === 0) {
+      resetNearBy();
       onNearbyPlaces([]);
     }
   };

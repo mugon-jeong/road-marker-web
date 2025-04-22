@@ -7,11 +7,19 @@ import {
   Map,
   MapControl,
 } from "@vis.gl/react-google-maps";
-import { ChevronLeft, ChevronRight, Minus, Plus, X } from "lucide-react";
+import {
+  ChevronLeft,
+  ChevronRight,
+  Minus,
+  Plus,
+  RefreshCcw,
+  X,
+} from "lucide-react";
 import { useState } from "react";
+import React from "react";
 import { MapSearchAutocomplete } from "./map-search-autocomplete";
 
-import { AdvancedMarker, Pin } from "@vis.gl/react-google-maps";
+import { MapMarker } from "./map-marker";
 import {
   Drawer,
   DrawerContent,
@@ -33,7 +41,8 @@ const GoogleMap = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
   const [mapInstance, setMapInstance] = useState<google.maps.Map | null>(null);
-
+  const [selectedPlace, setSelectedPlace] =
+    useState<google.maps.places.Place | null>(null);
   const handleZoomIn = () => {
     setZoom((prev) => Math.min(prev + 1, MAX_ZOOM));
   };
@@ -50,7 +59,7 @@ const GoogleMap = () => {
   };
 
   return (
-    <APIProvider apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS!}>
+    <APIProvider version="beta" apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS!}>
       <Map
         defaultCenter={{
           lat: latitude,
@@ -58,6 +67,7 @@ const GoogleMap = () => {
         }}
         center={current}
         zoom={zoom}
+        onZoomChanged={(ev) => setZoom(ev.detail.zoom)}
         gestureHandling={"greedy"}
         disableDefaultUI={true}
         mapId={"road-marker"}
@@ -76,8 +86,7 @@ const GoogleMap = () => {
             <MapSearchAutocomplete
               onPlaceSelect={(place) => {
                 if (place) {
-                  setPlaces([place]);
-                  setIsDrawerOpen(true);
+                  setPlaces((prev) => [place, ...prev]);
                 }
               }}
               center={current || { lat: latitude, lng: longitude }}
@@ -85,6 +94,13 @@ const GoogleMap = () => {
               onTypesChange={setSelectedTypes}
               onNearbyPlaces={(nearbyPlaces) => setPlaces(nearbyPlaces)}
             />
+          </div>
+        </MapControl>
+        <MapControl position={ControlPosition.TOP_RIGHT}>
+          <div className="p-2">
+            <Button variant="outline" size="icon" onClick={() => setPlaces([])}>
+              <RefreshCcw />
+            </Button>
           </div>
         </MapControl>
         <MapControl position={ControlPosition.RIGHT_CENTER}>
@@ -110,23 +126,16 @@ const GoogleMap = () => {
           </div>
         </MapControl>
         {places.map((place, index) => (
-          <AdvancedMarker
+          <MapMarker
             key={`${place.id}-${index}`}
-            position={place.location}
-            onClick={() => {
-              setPlaces([...places]);
+            place={place}
+            index={index}
+            mapInstance={mapInstance}
+            onMarkerClick={(place) => {
+              setSelectedPlace(place);
               setIsDrawerOpen(true);
-              if (place.viewport && mapInstance)
-                mapInstance.fitBounds(place.viewport);
             }}
-          >
-            <Pin
-              background={place.iconBackgroundColor}
-              glyph={
-                place.svgIconMaskURI ? new URL(place.svgIconMaskURI) : null
-              }
-            />
-          </AdvancedMarker>
+          />
         ))}
       </Map>
       <Drawer
@@ -145,7 +154,7 @@ const GoogleMap = () => {
               </DrawerClose>
             </div>
           </DrawerHeader>
-          <PlaceDetails places={places} />
+          <PlaceDetails places={places} selectedPlace={selectedPlace} />
         </DrawerContent>
       </Drawer>
     </APIProvider>
